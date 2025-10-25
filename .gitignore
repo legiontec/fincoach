@@ -1,0 +1,29 @@
+# Dependencias
+node_modules/
+package-lock.json
+
+# Build outputs
+dist/
+build/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos temporales
+*.log
+*.tmp
+*.temp
+
+# Archivos de IDE
+.vscode/
+.idea/
+
+# Variables de entorno
+.env
+.env.local
+.env.production
+
+# Archivos de configuración temporal
+vite.config.ts.*
+*.tar.gz
