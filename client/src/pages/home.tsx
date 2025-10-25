@@ -93,7 +93,7 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
             <button
@@ -172,16 +172,17 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Mobile menu */}
+      </nav>
+
+        {/* Mobile dropdown menu */}
         <div className={`md:hidden transition-all duration-300 ease-in-out ${
           mobileMenuOpen 
-            ? 'fixed inset-0 z-50' 
-            : 'hidden'
-        }`} data-testid="menu-mobile">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8">
-            <div className={`flex items-center justify-between h-16 lg:h-20 transition-all duration-300 ease-in-out ${
-              mobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-            }`}>
+            ? 'fixed inset-0 z-50 bg-white opacity-100' 
+            : 'fixed inset-0 z-50 bg-white opacity-0 pointer-events-none'
+        }`}>
+          <div className="flex flex-col h-screen">
+            {/* Keep original navbar visible */}
+            <div className="flex items-center justify-between h-16 lg:h-20 px-4 sm:px-6 border-b border-border">
               {/* Logo */}
               <button
                 onClick={() => scrollToSection("hero")}
@@ -189,56 +190,28 @@ export default function Home() {
                 data-testid="button-logo-mobile"
               >
                 <TrendingUp className="w-8 h-8 text-destructive" />
-                <span className="text-xl lg:text-2xl font-bold font-heading">
+                <span className="text-xl font-bold font-heading">
                   FinCoach
                 </span>
               </button>
-
-              {/* Mobile menu button */}
+              
+              {/* Close button */}
               <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                onClick={() => setMobileMenuOpen(false)}
                 className="hover-elevate active-elevate-2 p-2 rounded-md transition-all duration-200"
                 data-testid="button-menu-toggle"
+                aria-label="Cerrar menú"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                <X className="w-6 h-6" />
               </button>
             </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Mobile dropdown menu */}
-      <div className={`md:hidden transition-all duration-300 ease-in-out ${
-        mobileMenuOpen 
-          ? 'fixed inset-0 z-50 bg-white' 
-          : 'hidden'
-      }`}>
-        <div className="flex flex-col h-screen">
-          {/* Header with logo and close button */}
-          <div className="flex items-center justify-between h-16 lg:h-20 px-6">
-            <button
-              onClick={() => scrollToSection("hero")}
-              className="flex items-center gap-2 rounded-md px-2 py-1"
-              data-testid="button-logo-mobile"
-            >
-              <TrendingUp className="w-8 h-8 text-destructive" />
-              <span className="text-xl font-bold font-heading">
-                FinCoach
-              </span>
-            </button>
-            
-            <button
-              onClick={() => setMobileMenuOpen(false)}
-              className="p-2 rounded-md transition-all duration-200"
-              data-testid="button-menu-toggle"
-              aria-label="Cerrar menú"
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
           
           {/* Menu content */}
-          <div className="flex-1 px-6 py-4 space-y-3 overflow-y-auto bg-white">
+          <div className={`flex-1 px-4 sm:px-6 py-4 space-y-3 overflow-y-auto bg-white transition-all duration-300 ease-out ${
+            mobileMenuOpen 
+              ? 'transform translate-y-0 opacity-100' 
+              : 'transform -translate-y-4 opacity-0'
+          }`}>
             <button
               onClick={() => {
                 scrollToSection("inicio");
@@ -292,7 +265,11 @@ export default function Home() {
           </div>
           
           {/* Bottom section with language selector and CTA */}
-          <div className="p-6 border-t border-border bg-white">
+          <div className={`p-4 sm:p-6 border-t border-border bg-white transition-all duration-300 ease-out ${
+            mobileMenuOpen 
+              ? 'transform translate-y-0 opacity-100' 
+              : 'transform translate-y-4 opacity-0'
+          }`}>
             <div className="flex gap-2 items-center">
               <LanguageSelector />
               <Button
@@ -313,25 +290,25 @@ export default function Home() {
 
       {/* Hero Section */}
       <section id="inicio" className="relative overflow-hidden py-8 md:py-16 lg:py-24" data-testid="section-hero" data-animate>
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Left: Text Content */}
-            <div className="space-y-8">
+            <div className="space-y-6 lg:space-y-8">
               <div className="space-y-4">
-                <h1 className="text-4xl lg:text-6xl xl:text-7xl font-bold leading-tight" data-testid="text-hero-title">
+                <h1 className="text-3xl sm:text-4xl lg:text-6xl xl:text-7xl font-bold leading-tight" data-testid="text-hero-title">
                   {t.hero.title}{" "}
                   <span className="text-primary">{t.hero.titleConfidence}</span>,<br />
                   {t.hero.titleNoWith} <span className="text-destructive">{t.hero.titlePanic}</span>
                 </h1>
-                <p className="text-lg lg:text-xl text-muted-foreground max-w-xl" data-testid="text-hero-subtitle">
+                <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-xl" data-testid="text-hero-subtitle">
                   {t.hero.subtitle}
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Button
                   size="lg"
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90 text-lg px-8 py-6 border border-destructive-border"
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90 text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 border border-destructive-border w-full sm:w-auto"
                   onClick={openModal}
                   data-testid="button-hero-cta-primary"
                 >
@@ -340,7 +317,7 @@ export default function Home() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="text-lg px-8 py-6"
+                  className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 w-full sm:w-auto"
                   onClick={() => scrollToSection("como-funciona")}
                   data-testid="button-hero-cta-secondary"
                 >
@@ -348,25 +325,29 @@ export default function Home() {
                 </Button>
               </div>
 
-              <div className="flex items-center gap-8 pt-4">
+              <div className="flex flex-row items-center gap-4 sm:gap-8 pt-4">
                 <div className="text-sm text-muted-foreground" data-testid="text-hero-trust">
-                  <div className="font-semibold text-foreground text-2xl">5,000+</div>
-                  <div>{t.hero.trustInvestors}</div>
+                  <div className="font-semibold text-foreground text-lg sm:text-xl lg:text-2xl">5,000+</div>
+                  <div className="text-xs sm:text-sm">{t.hero.trustInvestors}</div>
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  <div className="font-semibold text-foreground text-2xl">$10M+</div>
-                  <div>{t.hero.trustProtected}</div>
+                  <div className="font-semibold text-foreground text-lg sm:text-xl lg:text-2xl">$10M+</div>
+                  <div className="text-xs sm:text-sm">{t.hero.trustProtected}</div>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  <div className="font-semibold text-foreground text-lg sm:text-xl lg:text-2xl">4.9/5</div>
+                  <div className="text-xs sm:text-sm">{t.hero.trustRating}</div>
                 </div>
               </div>
             </div>
 
             {/* Right: Hero Image */}
-            <div className="relative" data-testid="image-hero">
+            <div className="relative mt-8 lg:mt-0" data-testid="image-hero">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img
                   src={heroImage}
                   alt="FinCoach - Asistente de inversión con IA"
-                  className="w-full h-auto"
+                  className="w-full h-auto max-w-full"
                 />
               </div>
             </div>
@@ -712,33 +693,34 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contacto" className="py-16 lg:py-24" data-testid="section-contacto" data-animate>
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12">
+      <section id="contacto" className="py-12 sm:py-16 lg:py-24" data-testid="section-contacto" data-animate>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Left: Contact Form */}
-            <div className="space-y-6">
-              <div className="space-y-4">
-                <h2 className="text-3xl lg:text-4xl font-bold" data-testid="text-contacto-title">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="space-y-3 sm:space-y-4">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold" data-testid="text-contacto-title">
                   {t.contact.title}
                 </h2>
-                <p className="text-lg text-muted-foreground">
+                <p className="text-base sm:text-lg text-muted-foreground">
                   {t.contact.subtitle}
                 </p>
               </div>
 
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleContactSubmit)} className="space-y-4" data-testid="form-contact">
+                <form onSubmit={form.handleSubmit(handleContactSubmit)} className="space-y-3 sm:space-y-4" data-testid="form-contact">
                   <FormField
                     control={form.control}
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t.contact.form.nameLabel}</FormLabel>
+                        <FormLabel className="text-sm sm:text-base">{t.contact.form.nameLabel}</FormLabel>
                         <FormControl>
                           <Input
                             placeholder={t.contact.form.namePlaceholder}
                             {...field}
                             data-testid="input-contact-name"
+                            className="w-full"
                           />
                         </FormControl>
                         <FormMessage />
@@ -750,13 +732,14 @@ export default function Home() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t.contact.form.emailLabel}</FormLabel>
+                        <FormLabel className="text-sm sm:text-base">{t.contact.form.emailLabel}</FormLabel>
                         <FormControl>
                           <Input
                             type="email"
                             placeholder={t.contact.form.emailPlaceholder}
                             {...field}
                             data-testid="input-contact-email"
+                            className="w-full"
                           />
                         </FormControl>
                         <FormMessage />
@@ -768,14 +751,14 @@ export default function Home() {
                     name="message"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t.contact.form.messageLabel}</FormLabel>
+                        <FormLabel className="text-sm sm:text-base">{t.contact.form.messageLabel}</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder={t.contact.form.messagePlaceholder}
-                            rows={5}
+                            rows={4}
                             {...field}
                             data-testid="input-contact-message"
-                            className="resize-none"
+                            className="resize-none w-full"
                           />
                         </FormControl>
                         <FormMessage />
@@ -785,7 +768,7 @@ export default function Home() {
                   <Button
                     type="submit"
                     size="lg"
-                    className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 border border-destructive-border"
+                    className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 border border-destructive-border text-sm sm:text-base py-3 sm:py-4"
                     disabled={contactMutation.isPending}
                     data-testid="button-contact-submit"
                   >
@@ -796,42 +779,42 @@ export default function Home() {
             </div>
 
             {/* Right: Contact Info */}
-            <div className="space-y-8">
-              <Card className="p-8">
-                <CardContent className="space-y-6">
-                  <h3 className="text-2xl font-semibold mb-6">{t.contact.info.title}</h3>
+            <div className="space-y-6 sm:space-y-8 mt-8 lg:mt-0">
+              <Card className="p-4 sm:p-6 lg:p-8">
+                <CardContent className="space-y-4 sm:space-y-6">
+                  <h3 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">{t.contact.info.title}</h3>
                   
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-6 h-6 text-primary" />
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                     </div>
-                    <div>
-                      <div className="font-semibold mb-1">{t.contact.info.email}</div>
-                      <a href="mailto:contacto@fincoach.com" className="text-muted-foreground hover:text-primary">
+                    <div className="min-w-0 flex-1">
+                      <div className="font-semibold mb-1 text-sm sm:text-base">{t.contact.info.email}</div>
+                      <a href="mailto:contacto@fincoach.com" className="text-muted-foreground hover:text-primary text-xs sm:text-sm break-all">
                         contacto@fincoach.com
                       </a>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
-                      <Phone className="w-6 h-6 text-destructive" />
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
+                      <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-destructive" />
                     </div>
-                    <div>
-                      <div className="font-semibold mb-1">{t.contact.info.phone}</div>
-                      <a href="tel:+528112345678" className="text-muted-foreground hover:text-destructive">
+                    <div className="min-w-0 flex-1">
+                      <div className="font-semibold mb-1 text-sm sm:text-base">{t.contact.info.phone}</div>
+                      <a href="tel:+528112345678" className="text-muted-foreground hover:text-destructive text-xs sm:text-sm">
                         +52 81 1234 5678
                       </a>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-6 h-6 text-primary" />
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                     </div>
-                    <div>
-                      <div className="font-semibold mb-1">{t.contact.info.location}</div>
-                      <p className="text-muted-foreground">
+                    <div className="min-w-0 flex-1">
+                      <div className="font-semibold mb-1 text-sm sm:text-base">{t.contact.info.location}</div>
+                      <p className="text-muted-foreground text-xs sm:text-sm">
                         Monterrey, Nuevo León<br />
                         México
                       </p>
@@ -840,9 +823,9 @@ export default function Home() {
                 </CardContent>
               </Card>
 
-              <div className="p-8 bg-primary from-primary to-destructive rounded-2xl text-white">
-                <h4 className="text-2xl font-bold mb-3">{t.contact.info.hours}</h4>
-                <p className="opacity-90">
+              <div className="p-4 sm:p-6 lg:p-8 bg-primary from-primary to-destructive rounded-2xl text-white">
+                <h4 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">{t.contact.info.hours}</h4>
+                <p className="opacity-90 text-sm sm:text-base">
                   {t.contact.info.hoursText.split('\n').map((line, index) => (
                     <span key={index}>
                       {line}
@@ -857,9 +840,9 @@ export default function Home() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-16 lg:py-24 bg-gray from-primary via-primary to-destructive" data-testid="section-cta-final" data-animate>
-        <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center space-y-8">
-          <h2 className="text-3xl lg:text-5xl font-bold text-white" data-testid="text-cta-final-title">
+      <section className="py-12 sm:py-16 lg:py-24 bg-gray from-primary via-primary to-destructive" data-testid="section-cta-final" data-animate>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 sm:space-y-8">
+          <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-white" data-testid="text-cta-final-title">
             {t.finalCta.title.split('\n').map((line, index) => (
               <span key={index}>
                 {line}
@@ -867,12 +850,12 @@ export default function Home() {
               </span>
             ))}
           </h2>
-          <p className="text-lg lg:text-xl text-white/90 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-white/90 max-w-2xl mx-auto">
             {t.finalCta.subtitle}
           </p>
           <Button
             size="lg"
-            className="bg-white text-gray hover:bg-white/90 text-lg px-12 py-6 shadow-2xl border border-gray-200"
+            className="bg-white text-gray hover:bg-white/90 text-sm sm:text-base lg:text-lg px-8 sm:px-12 py-4 sm:py-6 shadow-2xl border border-gray-200 w-full sm:w-auto"
             onClick={openModal}
             data-testid="button-cta-final"
           >
@@ -888,8 +871,8 @@ export default function Home() {
             {/* Column 1: Brand */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <TrendingUp className="w-8 h-8 text-destructive" />
-                <span className="text-2xl font-bold">FinCoach</span>
+                <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-destructive" />
+                <span className="text-xl sm:text-2xl font-bold">FinCoach</span>
               </div>
               <p className="text-white/80 text-sm">
                 {t.footer.description}

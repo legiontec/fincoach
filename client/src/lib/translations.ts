@@ -22,6 +22,7 @@ export interface Translations {
     ctaSecondary: string;
     trustInvestors: string;
     trustProtected: string;
+    trustRating: string;
   };
   
   // How it works section
@@ -241,6 +242,7 @@ export const translations: Record<Language, Translations> = {
       ctaSecondary: "Ver cómo funciona",
       trustInvestors: "Inversores activos",
       trustProtected: "Protegidos del pánico",
+      trustRating: "Calificación de confianza",
     },
     howItWorks: {
       title: "¿Cómo funciona FinCoach?",
@@ -456,6 +458,7 @@ export const translations: Record<Language, Translations> = {
       ctaSecondary: "See how it works",
       trustInvestors: "Active investors",
       trustProtected: "Protected from panic",
+      trustRating: "Trust rating",
     },
     howItWorks: {
       title: "How does FinCoach work?",
