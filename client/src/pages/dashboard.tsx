@@ -11,12 +11,11 @@ export default function Dashboard() {
   const handleLogout = async () => {
     const result = await logout();
     if (result.success) {
-      // El usuario será redirigido automáticamente por el hook de autenticación
     }
   };
 
   if (!user) {
-    return null; // No debería llegar aquí si está protegido
+    return null;
   }
 
   return (
