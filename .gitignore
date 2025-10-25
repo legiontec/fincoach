@@ -27,3 +27,7 @@ Thumbs.db
 # Archivos de configuración temporal
 vite.config.ts.*
 *.tar.gz
+
+# --- Python Backend ---
+/python_api/hackmty.db
+/venv/
