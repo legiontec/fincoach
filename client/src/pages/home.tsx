@@ -465,7 +465,7 @@ export default function Home() {
               </div>
               <div className="relative">
                 <Card className="p-8 bg-gradient-to-br from-primary/5 to-primary/10">
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-4 p-4">
                     <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
                       <Shield className="w-8 h-8 text-primary" />
                       <div>
@@ -515,7 +515,7 @@ export default function Home() {
               </div>
               <div className="lg:order-1 relative">
                 <Card className="p-8 bg-gradient-to-br from-destructive/5 to-destructive/10">
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-4 p-4">
                     <div className="flex justify-between items-center mb-4">
                       <h4 className="font-semibold">{t.benefits.benefit2.demo.sentimentScore}</h4>
                       <span className="text-2xl font-bold text-primary">+7.2</span>
@@ -581,7 +581,7 @@ export default function Home() {
               </div>
               <div className="relative">
                 <Card className="p-8 bg-gradient-to-br from-primary/5 to-destructive/5">
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-4 p-4">
                     <div className="flex justify-between items-center p-4 bg-background rounded-lg border border-border">
                       <div>
                         <div className="text-sm text-muted-foreground">{t.benefits.benefit3.demo.financialCushion}</div>
