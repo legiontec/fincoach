@@ -257,7 +257,7 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Card 4: IA Recommendations & Opportunities */}
+            {/* Card 4: IA Recommendations */}
             <div className="col-span-2 md:col-span-2 space-y-4">
               {/* Financial Cushion Card */}
               <Card className="hover-elevate transition-all duration-300 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
