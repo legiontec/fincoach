@@ -5,12 +5,38 @@ import { LogOut, User, Mail, Calendar, TrendingUp, TrendingDown, DollarSign, Pie
 import { useLanguage } from "@/lib/language-context";
 import { FloatingChat } from "@/components/FloatingChat";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useNewsSentiment } from "@/hooks/use-news-sentiment";
+import { useMarketSentiment } from "@/hooks/use-market-sentiment";
+import { useResilienceScore } from "@/hooks/use-resilience-score";
+import { useAIRecommendations } from "@/hooks/use-ai-recommendations";
+import { useMemo } from "react";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
-  const { sentimentData, isLoading: newsLoading, error: newsError } = useNewsSentiment();
+  const { sentimentData, overallSentiment, isLoading: sentimentLoading, error: sentimentError } = useMarketSentiment();
+  const { data: resilienceData, isLoading: resilienceLoading } = useResilienceScore(user);
+  const { recommendation, isLoading: aiLoading } = useAIRecommendations(
+    resilienceData?.score || null,
+    overallSentiment
+  );
+
+  // Calcular colchón financiero fijo basado en el score de resiliencia
+  const financialCushion = useMemo(() => {
+    if (!resilienceData) return null;
+    
+    // Calcular monto basado en el score (score de 50-100 = $2,000 - $10,000)
+    const baseAmount = 2000;
+    const maxAmount = 10000;
+    const scoreMultiplier = resilienceData.score / 100;
+    const amount = baseAmount + (maxAmount - baseAmount) * scoreMultiplier;
+    
+    return {
+      amount: amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+      months: (resilienceData.score >= 90) ? '4.0' :
+              (resilienceData.score >= 75) ? '3.2' :
+              (resilienceData.score >= 50) ? '2.5' : '1.8'
+    };
+  }, [resilienceData]);
 
   const handleLogout = async () => {
     const result = await logout();
@@ -26,6 +52,18 @@ export default function Dashboard() {
     { name: 'Abr', value: 13500 },
     { name: 'May', value: 15000 },
     { name: 'Jun', value: 14500 },
+  ];
+
+  // Usar datos reales del hook o datos simulados como fallback
+  const marketSentimentData = sentimentData.length > 0 ? sentimentData : [
+    { time: '3h', value: 0.12, news: 'Actualización pre-mercado: Tecnología mixta' },
+    { time: '6h', value: 0.08, news: 'Apertura: Energías renovables suben' },
+    { time: '9h', value: 0.25, news: '⚠️ Pánico detectado en sector tech' },
+    { time: '12h', value: 0.18, news: 'Corrección: Bancos se estabilizan' },
+    { time: '15h', value: 0.35, news: '🚨 Alta volatilidad en commodities' },
+    { time: '18h', value: 0.22, news: 'Cierre: Recuperación moderada' },
+    { time: '21h', value: 0.15, news: 'Noticias post-mercado neutras' },
+    { time: '24h', value: 0.10, news: 'Pre-apertura: Mercados asiáticos positivos' },
   ];
 
   const assetDistribution = [
@@ -180,94 +218,95 @@ export default function Dashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-1">
-                <div className="flex flex-col h-full">
-                  <div>
-                    <p className="text-3xl font-bold text-destructive">
-                      {sentimentData.length > 0 
-                        ? Math.round(sentimentData.reduce((sum, d) => sum + d.value, 0) / sentimentData.length * 100)
-                        : 0}%
-                    </p>
-                    <p className="text-sm text-muted-foreground">Impacto promedio de noticias</p>
-                  </div>
+                  <div className="flex flex-col h-full">
+                    <div>
+                      <p className="text-3xl font-bold text-destructive">
+                        {sentimentLoading ? '...' : Math.round(overallSentiment * 100)}%
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {sentimentLoading ? 'Analizando sentimiento...' : 'Sentimiento del mercado'}
+                      </p>
+                    </div>
                   <div className="h-[250px] pb-6 relative">
-                    {newsLoading ? (
+                    {sentimentLoading ? (
                       <div className="flex items-center justify-center h-full">
                         <div className="text-center">
-                          <div className="h-8 w-8 animate-spin mx-auto mb-2 rounded-full border-4 border-muted-foreground border-t-transparent"></div>
-                          <p className="text-sm text-muted-foreground">Analizando noticias...</p>
+                          <div className="h-8 w-8 animate-spin mx-auto mb-2 rounded-full border-4 border-destructive border-t-transparent"></div>
+                          <p className="text-sm text-muted-foreground">Analizando noticias con IA...</p>
                         </div>
                       </div>
-                    ) : newsError ? (
+                    ) : sentimentError ? (
                       <div className="flex items-center justify-center h-full">
-                        <p className="text-sm text-destructive">{newsError}</p>
+                        <p className="text-sm text-destructive">{sentimentError}</p>
                       </div>
-                    ) : sentimentData.length > 0 ? (
-                      <>
-                        <svg className="w-full h-full" viewBox="0 0 300 120" preserveAspectRatio="xMidYMid meet">
-                          {/* Y-axis labels (0-1 scale) */}
-                          {[1, 0.8, 0.6, 0.4, 0.2, 0].map((value, i) => (
-                            <text
-                              key={i}
-                              x="5"
-                              y={20 + i * 20}
-                              className="fill-muted-foreground"
-                              fontSize="8"
-                            >
-                              {value}
-                            </text>
-                          ))}
-                          {/* Grid lines */}
-                          {[...Array(6)].map((_, i) => (
-                            <line
-                              key={`grid-${i}`}
-                              x1="20"
-                              y1={20 + i * 20}
-                              x2="300"
-                              y2={20 + i * 20}
-                              stroke="#e5e7eb"
-                              strokeWidth="0.5"
+                    ) : (
+                      <svg className="w-full h-full" viewBox="0 0 300 120" preserveAspectRatio="xMidYMid meet">
+                      {/* Y-axis labels (0-1 scale) */}
+                      {[1, 0.8, 0.6, 0.4, 0.2, 0].map((value, i) => (
+                        <text
+                          key={i}
+                          x="5"
+                          y={20 + i * 20}
+                          className="fill-muted-foreground"
+                          fontSize="8"
+                        >
+                          {value}
+                        </text>
+                      ))}
+                      {/* Grid lines */}
+                      {[...Array(6)].map((_, i) => (
+                        <line
+                          key={`grid-${i}`}
+                          x1="20"
+                          y1={20 + i * 20}
+                          x2="300"
+                          y2={20 + i * 20}
+                          stroke="#e5e7eb"
+                          strokeWidth="0.5"
+                        />
+                      ))}
+                      {/* Line path - valores de 0 a 1 (impacto) */}
+                      <polyline
+                        points={marketSentimentData.map((item, index) => {
+                          const y = 119 - (item.value * 80); // Escala 0-1 a 100-20
+                          const x = 40 + (index * 34);
+                          return `${x},${y}`;
+                        }).join(' ')}
+                        fill="none"
+                        stroke="#ef4444"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      {/* Dots on line */}
+                      {marketSentimentData.map((item, index) => {
+                        const y = 119 - (item.value * 80);
+                        const x = 40 + (index * 34);
+                        return (
+                          <g key={index}>
+                            <circle
+                              cx={x}
+                              cy={y}
+                              r="4"
+                              fill="#ef4444"
+                              stroke="white"
+                              strokeWidth="2"
                             />
-                          ))}
-                          {/* Line path - valores de 0 a 1 (impacto) */}
-                          <polyline
-                            points={sentimentData.map((item, index) => {
-                              const y = 119 - (item.value * 80);
-                              const x = 40 + (index * 34);
-                              return `${x},${y}`;
-                            }).join(' ')}
-                            fill="none"
-                            stroke="#ef4444"
-                            strokeWidth="3"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                          {/* Dots on line */}
-                          {sentimentData.map((item, index) => {
-                            const y = 119 - (item.value * 80);
-                            const x = 40 + (index * 34);
-                            return (
-                              <g key={index}>
-                                <circle
-                                  cx={x}
-                                  cy={y}
-                                  r="4"
-                                  fill="#ef4444"
-                                  stroke="white"
-                                  strokeWidth="2"
-                                />
-                                <title>{item.news}</title>
-                              </g>
-                            );
-                          })}
-                        </svg>
-                        {/* X-axis labels - horas */}
-                        <div className="absolute bottom-0 left-10 right-0 flex justify-between px-4">
-                          {sentimentData.map((item, index) => (
-                            <p key={index} className="text-xs text-muted-foreground">{item.time}</p>
-                          ))}
-                        </div>
-                      </>
-                    ) : null}
+                            {/* Tooltip en hover */}
+                            <title>{item.news}</title>
+                          </g>
+                        );
+                      })}
+                      </svg>
+                    )}
+                    {/* X-axis labels - horas */}
+                    {!sentimentLoading && !sentimentError && (
+                      <div className="absolute bottom-0 left-10 right-0 flex justify-between px-4">
+                        {marketSentimentData.map((item, index) => (
+                          <p key={index} className="text-xs text-muted-foreground">{item.time}</p>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -282,7 +321,7 @@ export default function Dashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-1 overflow-y-auto space-y-4">
-              {/* Financial Cushion Card */}
+              {/* Financial Cushion Card - Always shown */}
               <Card className="hover-elevate transition-all duration-300 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
@@ -291,8 +330,18 @@ export default function Dashboard() {
                         <Shield className="w-5 h-5 text-blue-700" />
                         <h3 className="font-semibold text-blue-900">Colchón Financiero</h3>
                       </div>
-                      <p className="text-4xl font-bold text-blue-700 mb-1">$4,500</p>
-                      <p className="text-sm text-blue-600">3.2 meses de gastos</p>
+                      <p className="text-4xl font-bold text-blue-700 mb-1">
+                        {resilienceLoading ? '...' : financialCushion ? `$${financialCushion.amount}` : '$4,500'}
+                      </p>
+                      <p className="text-sm text-blue-600">
+                        {resilienceData ? (
+                          <>
+                            <span className="font-semibold">{financialCushion?.months} meses</span> de gastos · Score: {resilienceData.score}/100
+                            <br />
+                            <span className="text-xs">{resilienceData.message}</span>
+                          </>
+                        ) : 'Cargando...'}
+                      </p>
                     </div>
                     <div className="flex items-center justify-center">
                       <div className="w-16 h-16 bg-blue-700/10 rounded-full flex items-center justify-center">
@@ -303,24 +352,48 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
 
-              {/* Opportunity Card */}
-              <Card className="hover-elevate transition-all duration-300 bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-3 mb-4">
-                    <Lightbulb className="w-6 h-6 text-yellow-600 flex-shrink-0" />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 mb-1">Oportunidad Detectada</h3>
-                      <p className="text-sm text-gray-700">
-                        Acción XYZ subvaluada en -12%. Tienes liquidez suficiente para una micro-compra.
-                      </p>
+              {/* Dynamic Recommendation Card */}
+              {aiLoading ? (
+                <Card className="hover-elevate transition-all duration-300 bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-center gap-3">
+                      <div className="h-6 w-6 animate-spin rounded-full border-4 border-gray-600 border-t-transparent"></div>
+                      <p className="text-sm text-gray-600">Generando recomendación personalizada...</p>
                     </div>
-                  </div>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                    Invertir $50 ahora
-                  </Button>
-                </CardContent>
-              </Card>
-              
+                  </CardContent>
+                </Card>
+              ) : recommendation ? (
+                recommendation.type === 'opportunity' ? (
+                  <Card className="hover-elevate transition-all duration-300 bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200">
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-3 mb-4">
+                        <Lightbulb className="w-6 h-6 text-yellow-600 flex-shrink-0" />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900 mb-1">{recommendation.title}</h3>
+                          <p className="text-sm text-gray-700 whitespace-pre-line">{recommendation.message}</p>
+                        </div>
+                      </div>
+                      {recommendation.action && (
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                          {recommendation.actionLabel || recommendation.action}
+                        </Button>
+                      )}
+                    </CardContent>
+                  </Card>
+                ) : recommendation.type === 'alert' ? (
+                  <Card className="hover-elevate transition-all duration-300 bg-gradient-to-br from-red-50 to-pink-50 border-red-200">
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-3">
+                        <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0" />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-red-900 mb-1">{recommendation.title}</h3>
+                          <p className="text-sm text-red-700 whitespace-pre-line">{recommendation.message}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ) : null
+              ) : null}
               </CardContent>
             </Card>
 

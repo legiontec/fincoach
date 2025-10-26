@@ -1,15 +1,15 @@
-import pyodbc, requests, json, time
+import pyodbc, requests, json, time, os
 from google import genai
 from google.genai import types
-from decouple import config
 import pandas as pd
 
-API_KEY = config('GEMINI_API_KEY')
+# Get environment variables (passed from Node.js or from .env)
+API_KEY = os.getenv('GEMINI_API_KEY') or os.getenv('VITE_GEMINI_API_KEY') or ''
 cliente = genai.Client(api_key=API_KEY)
-SERVIDOR = config('SERVER')
-USERNAME = config('UID')
-PASSWORD = config('PWD')
-NEWS_API_KEY = config('NEWS_API_KEY')
+SERVIDOR = os.getenv('SERVER') or ''
+USERNAME = os.getenv('UID') or ''
+PASSWORD = os.getenv('PWD') or ''
+NEWS_API_KEY = os.getenv('NEWS_API_KEY') or os.getenv('VITE_NEWS_API_KEY') or ''
 
 def connect(SERVIDOR, DB, USERNAME, PASSWORD):
     conn = pyodbc.connect(f"""
