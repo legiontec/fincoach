@@ -48,7 +48,7 @@ export default function Home() {
         // Para otras secciones, usar offset del navbar
         const navbarHeight = 80;
         const elementPosition = element.offsetTop - navbarHeight;
-        
+
         window.scrollTo({
           top: elementPosition,
           behavior: "smooth"
@@ -191,8 +191,8 @@ export default function Home() {
 
       {/* Mobile dropdown menu */}
       <div className={`md:hidden transition-all duration-300 ease-in-out ${mobileMenuOpen
-          ? 'fixed inset-0 z-50 bg-white opacity-100'
-          : 'fixed inset-0 z-50 bg-white opacity-0 pointer-events-none'
+        ? 'fixed inset-0 z-50 bg-white opacity-100'
+        : 'fixed inset-0 z-50 bg-white opacity-0 pointer-events-none'
         }`}>
         <div className="flex flex-col h-screen">
           {/* Keep original navbar visible */}
@@ -222,8 +222,8 @@ export default function Home() {
 
           {/* Menu content */}
           <div className={`flex-1 px-4 sm:px-6 py-4 space-y-3 overflow-y-auto bg-white transition-all duration-300 ease-out ${mobileMenuOpen
-              ? 'transform translate-y-0 opacity-100'
-              : 'transform -translate-y-4 opacity-0'
+            ? 'transform translate-y-0 opacity-100'
+            : 'transform -translate-y-4 opacity-0'
             }`}>
             <button
               onClick={() => {
@@ -278,8 +278,8 @@ export default function Home() {
 
             {/* Bottom section with language selector and CTA */}
             <div className={`p-4 sm:p-6 border-t border-border bg-white transition-all duration-300 ease-out ${mobileMenuOpen
-                ? 'transform translate-y-0 opacity-100'
-                : 'transform translate-y-4 opacity-0'
+              ? 'transform translate-y-0 opacity-100'
+              : 'transform translate-y-4 opacity-0'
               }`}>
               <div className="flex gap-2 items-center">
                 <LanguageSelector />
@@ -386,9 +386,6 @@ export default function Home() {
                 <div className="flex items-center justify-center w-20 h-20 rounded-2xl bg-primary/10 mx-auto">
                   <img src={sentimentIcon} alt="Análisis de Sentimiento" className="w-12 h-12" />
                 </div>
-                <div className="absolute top-8 right-8 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
-                  1
-                </div>
                 <div className="text-center space-y-3">
                   <h3 className="text-xl font-semibold">{t.howItWorks.step1.title}</h3>
                   <p className="text-muted-foreground">
@@ -404,11 +401,13 @@ export default function Home() {
                 <div className="flex items-center justify-center w-20 h-20 rounded-2xl bg-destructive/10 mx-auto">
                   <img src={alertIcon} alt="Alertas Anti-Pánico" className="w-12 h-12" />
                 </div>
-                <div className="absolute top-8 right-8 w-10 h-10 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center font-bold text-lg">
-                  2
-                </div>
                 <div className="text-center space-y-3">
-                  <h3 className="text-xl font-semibold">{t.howItWorks.step2.title}</h3>
+                  <h3 className="text-xl font-semibold">{t.howItWorks.step2.title.split('\n').map((line, index) => (
+                    <span key={index}>
+                      {line}
+                      {index < t.howItWorks.step2.title.split('\n').length - 1 && <br />}
+                    </span>
+                  ))}</h3>
                   <p className="text-muted-foreground">
                     {t.howItWorks.step2.description}
                   </p>
@@ -421,9 +420,6 @@ export default function Home() {
               <CardContent className="p-8 space-y-6">
                 <div className="flex items-center justify-center w-20 h-20 rounded-2xl bg-primary/10 mx-auto">
                   <img src={strategyIcon} alt="Micro-Estrategias" className="w-12 h-12" />
-                </div>
-                <div className="absolute top-8 right-8 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
-                  3
                 </div>
                 <div className="text-center space-y-3">
                   <h3 className="text-xl font-semibold">{t.howItWorks.step3.title}</h3>

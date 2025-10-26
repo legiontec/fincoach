@@ -23,6 +23,7 @@ Thumbs.db
 .env
 .env.local
 .env.production
+.client/.env
 
 # Archivos de configuración temporal
 vite.config.ts.*
