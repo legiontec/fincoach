@@ -15,10 +15,10 @@ import { useLanguage } from "@/lib/language-context";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { AuthModal } from "@/components/AuthModal";
 import { useAuthModal } from "@/hooks/use-auth-modal";
-import heroImage from "@assets/generated_images/FinCoach_hero_illustration_investment_app_f7646911.png";
-import sentimentIcon from "@assets/generated_images/AI_sentiment_analysis_icon_5335477c.png";
-import alertIcon from "@assets/generated_images/Anti-panic_alert_notification_icon_96b616d9.png";
-import strategyIcon from "@assets/generated_images/Personalized_strategy_target_icon_0159b5a8.png";
+import heroImage from "@/assets/images/FinCoach_hero_illustration_investment_app_f7646911.png";
+import sentimentIcon from "@/assets/images/AI_sentiment_analysis_icon_5335477c.png";
+import alertIcon from "@/assets/images/Anti-panic_alert_notification_icon_96b616d9.png";
+import strategyIcon from "@/assets/images/Personalized_strategy_target_icon_0159b5a8.png";
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -38,7 +38,22 @@ export default function Home() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (sectionId === "inicio") {
+        // Para el hero section, ir al inicio de la página
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+      } else {
+        // Para otras secciones, usar offset del navbar
+        const navbarHeight = 80;
+        const elementPosition = element.offsetTop - navbarHeight;
+        
+        window.scrollTo({
+          top: elementPosition,
+          behavior: "smooth"
+        });
+      }
       setMobileMenuOpen(false);
     }
   };
@@ -174,44 +189,42 @@ export default function Home() {
 
       </nav>
 
-        {/* Mobile dropdown menu */}
-        <div className={`md:hidden transition-all duration-300 ease-in-out ${
-          mobileMenuOpen 
-            ? 'fixed inset-0 z-50 bg-white opacity-100' 
-            : 'fixed inset-0 z-50 bg-white opacity-0 pointer-events-none'
+      {/* Mobile dropdown menu */}
+      <div className={`md:hidden transition-all duration-300 ease-in-out ${mobileMenuOpen
+          ? 'fixed inset-0 z-50 bg-white opacity-100'
+          : 'fixed inset-0 z-50 bg-white opacity-0 pointer-events-none'
         }`}>
-          <div className="flex flex-col h-screen">
-            {/* Keep original navbar visible */}
-            <div className="flex items-center justify-between h-16 lg:h-20 px-4 sm:px-6 border-b border-border">
-              {/* Logo */}
-              <button
-                onClick={() => scrollToSection("hero")}
-                className="flex items-center gap-2 hover-elevate active-elevate-2 rounded-md px-2 py-1"
-                data-testid="button-logo-mobile"
-              >
-                <TrendingUp className="w-8 h-8 text-destructive" />
-                <span className="text-xl font-bold font-heading">
-                  FinCoach
-                </span>
-              </button>
-              
-              {/* Close button */}
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="hover-elevate active-elevate-2 p-2 rounded-md transition-all duration-200"
-                data-testid="button-menu-toggle"
-                aria-label="Cerrar menú"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-          
+        <div className="flex flex-col h-screen">
+          {/* Keep original navbar visible */}
+          <div className="flex items-center justify-between h-16 lg:h-20 px-4 sm:px-6 border-b border-border">
+            {/* Logo */}
+            <button
+              onClick={() => scrollToSection("hero")}
+              className="flex items-center gap-2 hover-elevate active-elevate-2 rounded-md px-2 py-1"
+              data-testid="button-logo-mobile"
+            >
+              <TrendingUp className="w-8 h-8 text-destructive" />
+              <span className="text-xl font-bold font-heading">
+                FinCoach
+              </span>
+            </button>
+
+            {/* Close button */}
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="hover-elevate active-elevate-2 p-2 rounded-md transition-all duration-200"
+              data-testid="button-menu-toggle"
+              aria-label="Cerrar menú"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
           {/* Menu content */}
-          <div className={`flex-1 px-4 sm:px-6 py-4 space-y-3 overflow-y-auto bg-white transition-all duration-300 ease-out ${
-            mobileMenuOpen 
-              ? 'transform translate-y-0 opacity-100' 
+          <div className={`flex-1 px-4 sm:px-6 py-4 space-y-3 overflow-y-auto bg-white transition-all duration-300 ease-out ${mobileMenuOpen
+              ? 'transform translate-y-0 opacity-100'
               : 'transform -translate-y-4 opacity-0'
-          }`}>
+            }`}>
             <button
               onClick={() => {
                 scrollToSection("inicio");
@@ -262,40 +275,39 @@ export default function Home() {
             >
               {t.navbar.contacto}
             </button>
-          </div>
-          
-          {/* Bottom section with language selector and CTA */}
-          <div className={`p-4 sm:p-6 border-t border-border bg-white transition-all duration-300 ease-out ${
-            mobileMenuOpen 
-              ? 'transform translate-y-0 opacity-100' 
-              : 'transform translate-y-4 opacity-0'
-          }`}>
-            <div className="flex gap-2 items-center">
-              <LanguageSelector />
-              <Button
-                variant="default"
-                className="flex-1 bg-destructive text-destructive-foreground border border-destructive-border"
-                onClick={() => {
-                  openModal();
-                  setMobileMenuOpen(false);
-                }}
-                data-testid="button-empecemos-mobile"
-              >
-                {t.navbar.empecemos}
-              </Button>
+
+            {/* Bottom section with language selector and CTA */}
+            <div className={`p-4 sm:p-6 border-t border-border bg-white transition-all duration-300 ease-out ${mobileMenuOpen
+                ? 'transform translate-y-0 opacity-100'
+                : 'transform translate-y-4 opacity-0'
+              }`}>
+              <div className="flex gap-2 items-center">
+                <LanguageSelector />
+                <Button
+                  variant="default"
+                  className="flex-1 bg-destructive text-destructive-foreground border border-destructive-border"
+                  onClick={() => {
+                    openModal();
+                    setMobileMenuOpen(false);
+                  }}
+                  data-testid="button-empecemos-mobile"
+                >
+                  {t.navbar.empecemos}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Hero Section */}
-      <section id="inicio" className="relative overflow-hidden py-8 md:py-16 lg:py-24" data-testid="section-hero" data-animate>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="inicio" className="relative overflow-hidden py-8 md:py-16 lg:py-24 md:flex md:items-center hero-full-height" data-testid="section-hero" data-animate>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Left: Text Content */}
             <div className="space-y-6 lg:space-y-8">
               <div className="space-y-4">
-                <h1 className="text-3xl sm:text-4xl lg:text-6xl xl:text-7xl font-bold leading-tight" data-testid="text-hero-title">
+                <h1 className="text-4xl sm:text-6xl lg:text-6xl xl:text-7xl font-bold leading-tight" data-testid="text-hero-title">
                   {t.hero.title}{" "}
                   <span className="text-primary">{t.hero.titleConfidence}</span>,<br />
                   {t.hero.titleNoWith} <span className="text-destructive">{t.hero.titlePanic}</span>
@@ -783,7 +795,7 @@ export default function Home() {
               <Card className="p-4 sm:p-6 lg:p-8">
                 <CardContent className="space-y-4 sm:space-y-6">
                   <h3 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">{t.contact.info.title}</h3>
-                  
+
                   <div className="flex items-start gap-3 sm:gap-4">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
@@ -946,7 +958,7 @@ export default function Home() {
           {/* Bottom Bar */}
           <div className="pt-8 border-t border-white/20">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-sm text-white/70">
+              <p className="text-sm text-white/70 text-center md:text-left">
                 {t.footer.copyright}
               </p>
               <div className="flex gap-6">
@@ -967,7 +979,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
-      
+
       {/* Auth Modal */}
       <AuthModal isOpen={isOpen} onClose={closeModal} />
     </div>
