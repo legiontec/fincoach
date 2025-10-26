@@ -1,5 +1,7 @@
 import requests
-from flask import Flask, jsonify, request 
+from flask import Flask, jsonify, request
+import pyodbc
+import os 
 app = Flask(__name__)
 API_KEY = '1c6deb4b1d193e6db2b2791d2d866e2a'
 URL_BASE = 'http://api.nessieisreal.com'
@@ -1829,4 +1831,7 @@ def delete_withdrawal_by_id(withdrawal_id):
 # INICIA EL SERVIDOR
 # ---------------------------------------------------------------
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    # Get port from environment variable, default to 10000 if not found
+    port = int(os.environ.get("PORT", 10000))
+    # Listen on 0.0.0.0 to be accessible externally
+    app.run(debug=True, host='0.0.0.0', port=port)
