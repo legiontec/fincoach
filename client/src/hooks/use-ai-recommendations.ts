@@ -33,12 +33,6 @@ export function useAIRecommendations(
           import.meta.env.MODEL_GEMINI_API_KEY ||
           import.meta.env.VITE_GEMINI_API_KEY;
         
-        console.log('API Key status:', {
-          VITE_MODEL: !!import.meta.env.VITE_MODEL_GEMINI_API_KEY,
-          MODEL: !!import.meta.env.MODEL_GEMINI_API_KEY,
-          VITE: !!import.meta.env.VITE_GEMINI_API_KEY,
-          finalKeyLength: apiKey?.length || 0
-        });
         
         if (!apiKey) {
           throw new Error('API key de Gemini no configurada. Variable: VITE_MODEL_GEMINI_API_KEY');
@@ -86,7 +80,7 @@ export function useAIRecommendations(
                 temperature: 0.7,
                 topK: 40,
                 topP: 0.95,
-                maxOutputTokens: 512,
+                maxOutputTokens: 1024,
               },
             }),
           }
@@ -98,8 +92,6 @@ export function useAIRecommendations(
         }
 
         const data = await response.json();
-        
-        console.log('Gemini API Response:', JSON.stringify(data, null, 2));
         
         // Validate response structure
         if (!data.candidates || !Array.isArray(data.candidates) || data.candidates.length === 0) {
@@ -114,39 +106,35 @@ export function useAIRecommendations(
           throw new Error('La respuesta fue bloqueada por filtros de seguridad');
         }
 
-        // Check if response was truncated (MAX_TOKENS)
-        if (candidate.finishReason === 'MAX_TOKENS') {
-          console.warn('Response was truncated due to MAX_TOKENS. Content structure:', candidate.content);
-        }
-
         // Extract text safely - try multiple extraction methods
         let generatedMessage = '';
         
-        // Method 1: Standard structure with parts array
-        if (candidate.content && candidate.content.parts && Array.isArray(candidate.content.parts)) {
-          if (candidate.content.parts.length > 0 && candidate.content.parts[0].text) {
-            generatedMessage = candidate.content.parts[0].text;
-          } else if (candidate.content.parts.length > 0 && typeof candidate.content.parts[0] === 'string') {
-            generatedMessage = candidate.content.parts[0];
+        // If response was truncated (MAX_TOKENS) or content is empty, use fallback
+        if (candidate.finishReason === 'MAX_TOKENS' || !candidate.content || Object.keys(candidate.content).length <= 1) {
+          // Will generate fallback message below
+        } else {
+          // Method 1: Standard structure with parts array
+          if (candidate.content && candidate.content.parts && Array.isArray(candidate.content.parts)) {
+            if (candidate.content.parts.length > 0 && candidate.content.parts[0].text) {
+              generatedMessage = candidate.content.parts[0].text.trim();
+            } else if (candidate.content.parts.length > 0 && typeof candidate.content.parts[0] === 'string') {
+              generatedMessage = candidate.content.parts[0].trim();
+            }
+          }
+          
+          // Method 2: Try direct text property
+          if (!generatedMessage && candidate.content?.text) {
+            generatedMessage = candidate.content.text.trim();
+          }
+          
+          // Method 3: Try candidate.text directly
+          if (!generatedMessage && candidate.text) {
+            generatedMessage = candidate.text.trim();
           }
         }
         
-        // Method 2: Try direct text property
-        if (!generatedMessage && candidate.content?.text) {
-          generatedMessage = candidate.content.text;
-        }
-        
-        // Method 3: Try candidate.text directly
-        if (!generatedMessage && candidate.text) {
-          generatedMessage = candidate.text;
-        }
-        
-        console.log('Extracted message:', generatedMessage ? `Length: ${generatedMessage.length}` : 'EMPTY');
-        
-        // If message is empty due to MAX_TOKENS, use fallback message
+        // If message is empty, generate fallback message
         if (!generatedMessage) {
-          console.warn('Message extraction failed, using fallback');
-          
           // Generate fallback based on recommendation type
           if (recommendationType === 'alert') {
             generatedMessage = `Tu situación financiera es sólida (score: ${resilienceScore}/100) y el mercado actual muestra volatilidad. Mantén la calma y evita decisiones emocionales de venta. Tu colchón financiero te permite navegar esta volatilidad sin apuro.`;
