@@ -5,10 +5,12 @@ import { LogOut, User, Mail, Calendar, TrendingUp, TrendingDown, DollarSign, Pie
 import { useLanguage } from "@/lib/language-context";
 import { FloatingChat } from "@/components/FloatingChat";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useNewsSentiment } from "@/hooks/use-news-sentiment";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
+  const { sentimentData, isLoading: newsLoading, error: newsError } = useNewsSentiment();
 
   const handleLogout = async () => {
     const result = await logout();
@@ -24,15 +26,6 @@ export default function Dashboard() {
     { name: 'Abr', value: 13500 },
     { name: 'May', value: 15000 },
     { name: 'Jun', value: 14500 },
-  ];
-
-  const marketData = [
-    { name: 'Lun', value: 45 },
-    { name: 'Mar', value: 52 },
-    { name: 'Mié', value: 48 },
-    { name: 'Jue', value: 61 },
-    { name: 'Vie', value: 55 },
-    { name: 'Sáb', value: 58 },
   ];
 
   const assetDistribution = [
@@ -84,7 +77,7 @@ export default function Dashboard() {
             </p>
           </div>
 
-          {/* Dashboard Grid - 2x2 */}
+          {/* Dashboard Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Card 1: User Info */}
             <Card className="hover-elevate transition-all duration-300 flex flex-col">
@@ -94,7 +87,7 @@ export default function Dashboard() {
                   Información de tu cuenta
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-8 flex flex-col justify-center h-full">
+              <CardContent className="space-y-4 flex flex-col justify-center h-full">
                 { /* Avatar */}
                 <div className="flex items-center justify-center">
                   <Avatar className="w-20 h-20">
@@ -149,30 +142,30 @@ export default function Dashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-4">
                   <Button variant="outline" className="flex flex-col h-auto py-4 gap-2">
-                    <ArrowDownCircle className="w-6 h-6 text-green-600" />
-                    <span className="text-xs">Depositar</span>
+                    <ArrowDownCircle className="w-8 h-8 text-green-600" />
+                    <span className="text-md">Depositar</span>
                   </Button>
                   <Button variant="outline" className="flex flex-col h-auto py-4 gap-2">
-                    <Send className="w-6 h-6 text-blue-600" />
-                    <span className="text-xs">Transferir</span>
+                    <Send className="w-8 h-8 text-blue-600" />
+                    <span className="text-md">Transferir</span>
                   </Button>
                   <Button variant="outline" className="flex flex-col h-auto py-4 gap-2">
-                    <CreditCard className="w-6 h-6 text-purple-600" />
-                    <span className="text-xs">Pagar</span>
+                    <CreditCard className="w-8 h-8 text-purple-600" />
+                    <span className="text-md">Pagar</span>
                   </Button>
                   <Button variant="outline" className="flex flex-col h-auto py-4 gap-2">
-                    <ArrowUpCircle className="w-6 h-6 text-orange-600" />
-                    <span className="text-xs">Retirar</span>
+                    <ArrowUpCircle className="w-8 h-8 text-orange-600" />
+                    <span className="text-md">Retirar</span>
                   </Button>
                   <Button variant="outline" className="flex flex-col h-auto py-4 gap-2">
-                    <TrendingUp className="w-6 h-6 text-primary" />
-                    <span className="text-xs">Invertir</span>
+                    <TrendingUp className="w-8 h-8 text-primary" />
+                    <span className="text-md">Invertir</span>
                   </Button>
                   <Button variant="outline" className="flex flex-col h-auto py-4 gap-2">
-                    <TrendingDown className="w-6 h-6 text-destructive" />
-                    <span className="text-xs">Vender</span>
+                    <TrendingDown className="w-8 h-8 text-destructive" />
+                    <span className="text-md">Vender</span>
                   </Button>
                 </div>
               </CardContent>
@@ -183,75 +176,98 @@ export default function Dashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <LineChart className="w-5 h-5 text-destructive" />
-                  Sentimiento de Mercado
+                  Sentimiento del Mercado
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-1">
                 <div className="flex flex-col h-full">
                   <div>
-                    <p className="text-3xl font-bold text-destructive">58%</p>
-                    <p className="text-sm text-muted-foreground">Confianza general del mercado</p>
+                    <p className="text-3xl font-bold text-destructive">
+                      {sentimentData.length > 0 
+                        ? Math.round(sentimentData.reduce((sum, d) => sum + d.value, 0) / sentimentData.length * 100)
+                        : 0}%
+                    </p>
+                    <p className="text-sm text-muted-foreground">Impacto promedio de noticias</p>
                   </div>
                   <div className="h-[250px] pb-6 relative">
-                    <svg className="w-full h-full" viewBox="0 0 300 120" preserveAspectRatio="xMidYMid meet">
-                      {/* Grid lines */}
-                      {[...Array(6)].map((_, i) => (
-                        <line
-                          key={`grid-${i}`}
-                          x1="0"
-                          y1={20 + i * 20}
-                          x2="300"
-                          y2={20 + i * 20}
-                          stroke="#e5e7eb"
-                          strokeWidth="0.5"
-                        />
-                      ))}
-                      {/* Line path */}
-                      <polyline
-                        points={marketData.map((item, index) => {
-                          const maxValue = Math.max(...marketData.map(d => d.value));
-                          const minValue = Math.min(...marketData.map(d => d.value));
-                          const range = maxValue - minValue;
-                          const y = range > 0 
-                            ? 100 - ((item.value - minValue) / range) * 80 
-                            : 40;
-                          const x = 50 + (index * 40);
-                          return `${x},${y}`;
-                        }).join(' ')}
-                        fill="none"
-                        stroke="#ef4444"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      {/* Dots on line */}
-                      {marketData.map((item, index) => {
-                        const maxValue = Math.max(...marketData.map(d => d.value));
-                        const minValue = Math.min(...marketData.map(d => d.value));
-                        const range = maxValue - minValue;
-                        const y = range > 0 
-                          ? 100 - ((item.value - minValue) / range) * 80 
-                          : 40;
-                        const x = 50 + (index * 40);
-                        return (
-                          <circle
-                            key={index}
-                            cx={x}
-                            cy={y}
-                            r="4"
-                            fill="#ef4444"
-                            stroke="white"
-                            strokeWidth="2"
+                    {newsLoading ? (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-center">
+                          <div className="h-8 w-8 animate-spin mx-auto mb-2 rounded-full border-4 border-muted-foreground border-t-transparent"></div>
+                          <p className="text-sm text-muted-foreground">Analizando noticias...</p>
+                        </div>
+                      </div>
+                    ) : newsError ? (
+                      <div className="flex items-center justify-center h-full">
+                        <p className="text-sm text-destructive">{newsError}</p>
+                      </div>
+                    ) : sentimentData.length > 0 ? (
+                      <>
+                        <svg className="w-full h-full" viewBox="0 0 300 120" preserveAspectRatio="xMidYMid meet">
+                          {/* Y-axis labels (0-1 scale) */}
+                          {[1, 0.8, 0.6, 0.4, 0.2, 0].map((value, i) => (
+                            <text
+                              key={i}
+                              x="5"
+                              y={20 + i * 20}
+                              className="fill-muted-foreground"
+                              fontSize="8"
+                            >
+                              {value}
+                            </text>
+                          ))}
+                          {/* Grid lines */}
+                          {[...Array(6)].map((_, i) => (
+                            <line
+                              key={`grid-${i}`}
+                              x1="20"
+                              y1={20 + i * 20}
+                              x2="300"
+                              y2={20 + i * 20}
+                              stroke="#e5e7eb"
+                              strokeWidth="0.5"
+                            />
+                          ))}
+                          {/* Line path - valores de 0 a 1 (impacto) */}
+                          <polyline
+                            points={sentimentData.map((item, index) => {
+                              const y = 119 - (item.value * 80);
+                              const x = 40 + (index * 34);
+                              return `${x},${y}`;
+                            }).join(' ')}
+                            fill="none"
+                            stroke="#ef4444"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
                           />
-                        );
-                      })}
-                    </svg>
-                    {/* X-axis labels */}
-                    <div className="absolute bottom-0 left-0 right-0 flex justify-between px-2">
-                      {marketData.map((item, index) => (
-                        <p key={index} className="text-xs text-muted-foreground">{item.name}</p>
-                      ))}
-                    </div>
+                          {/* Dots on line */}
+                          {sentimentData.map((item, index) => {
+                            const y = 119 - (item.value * 80);
+                            const x = 40 + (index * 34);
+                            return (
+                              <g key={index}>
+                                <circle
+                                  cx={x}
+                                  cy={y}
+                                  r="4"
+                                  fill="#ef4444"
+                                  stroke="white"
+                                  strokeWidth="2"
+                                />
+                                <title>{item.news}</title>
+                              </g>
+                            );
+                          })}
+                        </svg>
+                        {/* X-axis labels - horas */}
+                        <div className="absolute bottom-0 left-10 right-0 flex justify-between px-4">
+                          {sentimentData.map((item, index) => (
+                            <p key={index} className="text-xs text-muted-foreground">{item.time}</p>
+                          ))}
+                        </div>
+                      </>
+                    ) : null}
                   </div>
                 </div>
               </CardContent>
