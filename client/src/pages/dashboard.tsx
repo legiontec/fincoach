@@ -257,8 +257,15 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Card 4: IA Recommendations & Opportunities */}
-            <div className="col-span-2 md:col-span-2 space-y-4">
+            {/* Card 4: IA Recommendations */}
+            <Card className="hover-elevate transition-all duration-300 flex flex-col">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lightbulb className="w-5 h-5 text-primary" />
+                  Recomendaciones IA
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 overflow-y-auto space-y-4">
               {/* Financial Cushion Card */}
               <Card className="hover-elevate transition-all duration-300 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
                 <CardContent className="p-6">
@@ -297,22 +304,9 @@ export default function Dashboard() {
                   </Button>
                 </CardContent>
               </Card>
-
-              {/* Alert Card */}
-              <Card className="hover-elevate transition-all duration-300 bg-gradient-to-br from-red-50 to-pink-50 border-red-200">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-3">
-                    <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0" />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-red-900 mb-1">Alerta Anti-Pánico</h3>
-                      <p className="text-sm text-red-700">
-                        El mercado muestra pánico de venta, pero tu portafolio permanece estable. Mantén la calma y evita decisiones emocionales.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+              
+              </CardContent>
+            </Card>
 
             {/* Card 5: Portfolio Value */}
             <Card className="hover-elevate transition-all duration-300 flex flex-col">
