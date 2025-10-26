@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![FinCoach Logo](client/public/favicon.png)
+![FinCoach Logo](https://img.shields.io/badge/FinCoach-AI%20Investment%20Assistant-blue?style=for-the-badge)
 ![React](https://img.shields.io/badge/React-18.0-blue?logo=react&style=for-the-badge)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript&style=for-the-badge)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.0-blue?logo=tailwindcss&style=for-the-badge)
