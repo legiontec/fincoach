@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hero section full height only on desktop */
+@media (min-width: 768px) {
+  .hero-full-height {
+    height: calc(100vh - 80px);
+  }
+}
+
 /* LIGHT MODE */
 :root {
   --button-outline: rgba(0,0,0, .10);

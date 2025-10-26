@@ -252,7 +252,7 @@ export const translations: Record<Language, Translations> = {
         description: "Monitoreamos noticias financieras, redes sociales y blogs para predecir reacciones emocionales del mercado antes de que afecten tu portafolio.",
       },
       step2: {
-        title: "Alertas Proactivas Anti-Pánico",
+        title: "Alertas Proactivas\nAnti-Pánico",
         description: "Cuando el mercado entra en pánico pero tu portafolio es estable, recibe notificaciones calmantes con datos contextuales que te mantienen enfocado.",
       },
       step3: {
